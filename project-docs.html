@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whizan - New Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .back-btn {
+            background: none;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #334155;
+        }
+
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Progress and Terminal Styles */
+        .progress-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .progress-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .progress-icon.running {
+            background: #3b82f6;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .progress-icon.success {
+            background: #10b981;
+            color: white;
+        }
+
+        .progress-icon.error {
+            background: #ef4444;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .progress-step {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .progress-step.active {
+            border-left-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .progress-step.success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .progress-step.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-status {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .terminal-output {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+            border: 1px solid #334155;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.25rem;
+        }
+
+        .terminal-command {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .terminal-output-text {
+            color: #94a3b8;
+        }
+
+        .terminal-error {
+            color: #f87171;
+        }
+
+        .terminal-success {
+            color: #34d399;
+        }
+
+        .command-display {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            color: #334155;
+            word-break: break-all;
+        }
+
+        .command-label {
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            display: none;
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .error-message {
+            display: none;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .finalize-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .finalize-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .project-info {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .project-info h3 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-info p {
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .form-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">Whizan</div>
+        <a href="project.html" class="back-btn">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+            </svg>
+            Back to Projects
+        </a>
+    </header>
+
+    <main class="main-container">
+        <h1 class="page-title">Create New Project</h1>
+        <p class="page-subtitle">Set up your project with documentation and structure</p>
+
+        <div class="form-container">
+            <form id="projectForm">
+                <div class="form-group">
+                    <label for="projectName" class="form-label">Project Name *</label>
+                    <input type="text" id="projectName" name="projectName" class="form-input" required 
+                           placeholder="Enter your project name">
+                </div>
+
+                <div class="form-group">
+                    <label for="appName" class="form-label">App Name *</label>
+                    <input type="text" id="appName" name="appName" class="form-input" required 
+                           placeholder="Enter your app name">
+                </div>
+
+                <div class="form-group">
+                    <label for="framework" class="form-label">Framework *</label>
+                    <select id="framework" name="framework" class="form-select" required>
+                        <option value="">Select a framework</option>
+                        <option value="react-typescript">React + TypeScript</option>
+                        <option value="nextjs">Next.js</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="projectDescription" class="form-label">Project Description *</label>
+                    <textarea id="projectDescription" name="projectDescription" class="form-textarea" required 
+                              placeholder="Describe your project, its features, and functionality..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Create Project
+                </button>
+            </form>
+
+            <!-- Progress Container -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-header">
+                    <div class="progress-icon running" id="progressIcon">⟳</div>
+                    <div>
+                        <h3>Project Creation Progress</h3>
+                        <p>Watch your project being created in real-time</p>
+                    </div>
+                </div>
+
+                <!-- Progress Steps -->
+                <div class="progress-step" id="step1">
+                    <div class="step-title">
+                        <span>1</span>
+                        <span>Generating Project Command</span>
+                    </div>
+                    <div class="step-status" id="step1Status">Waiting...</div>
+                </div>
+
+                <div class="progress-step" id="step2">
+                    <div class="step-title">
+                        <span>2</span>
+                        <span>Executing Command</span>
+                    </div>
+                    <div class="step-status" id="step2Status">Waiting...</div>
+                    <div class="command-display" id="commandDisplay" style="display: none;">
+                        <div class="command-label">Command to execute:</div>
+                        <div id="commandText"></div>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput" style="display: none;">
+                        <div class="terminal-line">
+                            <span class="terminal-command">$ </span>
+                            <span id="terminalCommand"></span>
+                        </div>
+                        <div id="terminalContent"></div>
+                    </div>
+                </div>
+
+                <div class="progress-step" id="step3">
+                    <div class="step-title">
+                        <span>3</span>
+                        <span>Saving Project Data</span>
+                    </div>
+                    <div class="step-status" id="step3Status">Waiting...</div>
+                </div>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Creating your project...</p>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                Project created successfully! Your project has been set up on your desktop.
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="project-info" id="projectInfo">
+                <h3>Project Details</h3>
+                <p><strong>Project ID:</strong> <span id="projectId"></span></p>
+                <p><strong>Location:</strong> <span id="projectLocation"></span></p>
+                <p><strong>Framework:</strong> <span id="projectFramework"></span></p>
+            </div>
+
+            <button class="finalize-btn" id="finalizeBtn">
+                Finalize Project
+            </button>
+        </div>
+    </main>
+
+    <script type="module">
+        // Import Firebase from CDN
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+        import { 
+            getAuth, 
+            onAuthStateChanged
+        } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            doc, 
+            updateDoc 
+        } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyABwi4-Rzl7T1qGLyWAWIAFcUxEivSX_BE",
+            authDomain: "whizan-coding--agent.firebaseapp.com",
+            databaseURL: "https://whizan-coding--agent-default-rtdb.firebaseio.com",
+            projectId: "whizan-coding--agent",
+            storageBucket: "whizan-coding--agent.firebasestorage.app",
+            messagingSenderId: "798036544047",
+            appId: "1:798036544047:web:ff7f8d3c44f40087e8d4da",
+            measurementId: "G-8DJEL3Q4RH"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Gemini API configuration
+        const GEMINI_API_KEY = 'AIzaSyBDA_wIQPBjWVVelfjzAToKhQfkkGYDyac';
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+
+        // DOM elements
+        const projectForm = document.getElementById('projectForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const projectInfo = document.getElementById('projectInfo');
+        const finalizeBtn = document.getElementById('finalizeBtn');
+
+        // Project data
+        let currentProjectId = null;
+        let currentProjectData = null;
+
+        // Check authentication
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            console.log('No user authenticated, but allowing access to project docs');
+        }
+
+        // Generate unique project ID
+        function generateProjectId() {
+            return 'proj_' + Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // Call Gemini API to generate project setup command
+        async function generateProjectCommand(projectData) {
+            try {
+                const prompt = `Generate a complete terminal command to create a ${projectData.framework} project with the following details:
+
+Project Name: ${projectData.projectName}
+App Name: ${projectData.appName}
+Description: ${projectData.projectDescription}
+
+Requirements:
+1. Create the project on the user's desktop
+2. Install all necessary dependencies for the project
+3. Must include firebase 
+4. The command should be ready to execute immediately
+
+For React + TypeScript, include:
+- TypeScript configuration
+
+- React Router
+- Axios for API calls
+- Styled Components or Tailwind CSS
+
+For Next.js, include:
+- TypeScript
+- Tailwind CSS
+- ESLint and Prettier
+- Additional useful packages
+
+Return ONLY the command, no explanations or markdown formatting.`;
+
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.3,
+                            maxOutputTokens: 1000
+                        }
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                    return data.candidates[0].content.parts[0].text.trim();
+                } else {
+                    throw new Error('Invalid response from Gemini API');
+                }
+            } catch (error) {
+                console.error('Error calling Gemini API:', error);
+                throw error;
+            }
+        }
+
+        // Execute terminal command via Electron
+        async function executeCommand(command) {
+            try {
+                if (window.electronAPI) {
+                    // Get desktop path
+                    const desktopPath = await window.electronAPI.getDesktopPath();
+                    addTerminalOutput(`Working directory: ${desktopPath}`, 'output');
+                    
+                    // Simulate command execution with progress updates
+                    addTerminalOutput('Starting command execution...', 'output');
+                    
+                    const result = await window.electronAPI.executeCommand(command, desktopPath);
+                    
+                    if (result.success) {
+                        addTerminalOutput('Command completed successfully!', 'success');
+                        if (result.output) {
+                            // Split output into lines for better display
+                            const lines = result.output.split('\n');
+                            lines.forEach(line => {
+                                if (line.trim()) {
+                                    addTerminalOutput(line.trim(), 'output');
+                                }
+                            });
+                        }
+                    } else {
+                        addTerminalOutput(`Command failed: ${result.error}`, 'error');
+                    }
+                    
+                    return result;
+                } else {
+                    // Fallback for web version
+                    console.log('Command to execute:', command);
+                    addTerminalOutput('Web version - command would be executed on desktop', 'output');
+                    return { success: true, output: 'Command would be executed on desktop' };
+                }
+            } catch (error) {
+                console.error('Error executing command:', error);
+                addTerminalOutput(`Execution error: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+
+        // Save project to Firestore
+        async function saveProjectToFirestore(projectData) {
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    throw new Error('User not authenticated');
+                }
+
+                const projectDoc = {
+                    userId: user.uid,
+                    projectId: projectData.projectId,
+                    projectName: projectData.projectName,
+                    appName: projectData.appName,
+                    framework: projectData.framework,
+                    description: projectData.projectDescription,
+                    command: projectData.command,
+                    projectPath: projectData.projectPath,
+                    status: 'tracker1_completed',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                const docRef = await addDoc(collection(db, 'UserProjects'), projectDoc);
+                console.log('Project saved to Firestore with ID:', docRef.id);
+                return docRef.id;
+            } catch (error) {
+                console.error('Error saving project to Firestore:', error);
+                throw error;
+            }
+        }
+
+        // Progress tracking functions
+        function showProgress() {
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function updateStep(stepNumber, status, isActive = false, isSuccess = false, isError = false) {
+            const step = document.getElementById(`step${stepNumber}`);
+            const statusElement = document.getElementById(`step${stepNumber}Status`);
+            
+            step.className = 'progress-step';
+            if (isActive) step.classList.add('active');
+            if (isSuccess) step.classList.add('success');
+            if (isError) step.classList.add('error');
+            
+            statusElement.textContent = status;
+        }
+
+        function updateProgressIcon(status) {
+            const icon = document.getElementById('progressIcon');
+            icon.className = 'progress-icon ' + status;
+            
+            if (status === 'running') icon.textContent = '⟳';
+            else if (status === 'success') icon.textContent = '✓';
+            else if (status === 'error') icon.textContent = '✗';
+        }
+
+        function showCommand(command) {
+            const commandDisplay = document.getElementById('commandDisplay');
+            const commandText = document.getElementById('commandText');
+            const terminalOutput = document.getElementById('terminalOutput');
+            const terminalCommand = document.getElementById('terminalCommand');
+            
+            commandDisplay.style.display = 'block';
+            terminalOutput.style.display = 'block';
+            commandText.textContent = command;
+            terminalCommand.textContent = command;
+        }
+
+        function addTerminalOutput(text, type = 'output') {
+            const terminalContent = document.getElementById('terminalContent');
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            
+            if (type === 'error') {
+                line.innerHTML = `<span class="terminal-error">${text}</span>`;
+            } else if (type === 'success') {
+                line.innerHTML = `<span class="terminal-success">${text}</span>`;
+            } else {
+                line.innerHTML = `<span class="terminal-output-text">${text}</span>`;
+            }
+            
+            terminalContent.appendChild(line);
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+        }
+
+        // Show/hide elements
+        function showLoading() {
+            loading.style.display = 'block';
+            submitBtn.disabled = true;
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            projectInfo.style.display = 'none';
+            finalizeBtn.style.display = 'none';
+            document.getElementById('progressContainer').style.display = 'none';
+        }
+
+        function hideLoading() {
+            loading.style.display = 'none';
+            submitBtn.disabled = false;
+        }
+
+        function showSuccess() {
+            successMessage.style.display = 'block';
+            projectInfo.style.display = 'block';
+            finalizeBtn.style.display = 'block';
+            updateProgressIcon('success');
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            updateProgressIcon('error');
+        }
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+
+        // Form submission handler
+        projectForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(projectForm);
+            const projectData = {
+                projectName: formData.get('projectName'),
+                appName: formData.get('appName'),
+                framework: formData.get('framework'),
+                projectDescription: formData.get('projectDescription')
+            };
+
+            // Validate form
+            if (!projectData.projectName || !projectData.appName || !projectData.framework || !projectData.projectDescription) {
+                showError('Please fill in all required fields');
+                return;
+            }
+
+            showProgress();
+            hideError();
+            updateProgressIcon('running');
+
+            try {
+                console.log('Creating project:', projectData);
+
+                // Step 1: Generate project ID
+                updateStep(1, 'Generating project ID...', true);
+                const projectId = generateProjectId();
+                projectData.projectId = projectId;
+                updateStep(1, 'Project ID generated: ' + projectId, false, true);
+                addTerminalOutput(`Generated Project ID: ${projectId}`, 'success');
+
+                // Step 2: Generate command using Gemini
+                updateStep(2, 'Generating project command with AI...', true);
+                addTerminalOutput('Calling Gemini API to generate project setup command...', 'output');
+                console.log('Generating project command...');
+                const command = await generateProjectCommand(projectData);
+                projectData.command = command;
+                updateStep(2, 'Command generated successfully', false, true);
+                addTerminalOutput('Command generated successfully!', 'success');
+
+                // Show the command to user
+                showCommand(command);
+                addTerminalOutput('Command preview:', 'output');
+                addTerminalOutput(command, 'output');
+
+                // Step 3: Execute command
+                updateStep(2, 'Executing command on desktop...', true);
+                addTerminalOutput('Executing command on desktop...', 'output');
+                console.log('Executing command...');
+                const executionResult = await executeCommand(command);
+                
+                if (!executionResult.success) {
+                    addTerminalOutput(`Error: ${executionResult.error}`, 'error');
+                    throw new Error(`Command execution failed: ${executionResult.error}`);
+                }
+
+                // Show execution result
+                if (executionResult.output) {
+                    addTerminalOutput('Command output:', 'output');
+                    addTerminalOutput(executionResult.output, 'output');
+                }
+                addTerminalOutput('Command executed successfully!', 'success');
+                updateStep(2, 'Command executed successfully', false, true);
+
+                // Step 4: Get project path
+                const desktopPath = await window.electronAPI.getDesktopPath();
+                projectData.projectPath = `${desktopPath}/${projectData.appName}`;
+                addTerminalOutput(`Project created at: ${projectData.projectPath}`, 'success');
+
+                // Step 5: Save to Firestore
+                updateStep(3, 'Saving project data to database...', true);
+                addTerminalOutput('Saving project data to Firestore...', 'output');
+                console.log('Saving to Firestore...');
+                await saveProjectToFirestore(projectData);
+                updateStep(3, 'Project data saved successfully', false, true);
+                addTerminalOutput('Project data saved to database!', 'success');
+
+                // Store current project data
+                currentProjectId = projectId;
+                currentProjectData = projectData;
+
+                // Update UI
+                document.getElementById('projectId').textContent = projectId;
+                document.getElementById('projectLocation').textContent = projectData.projectPath;
+                document.getElementById('projectFramework').textContent = projectData.framework;
+
+                hideLoading();
+                showSuccess();
+                addTerminalOutput('🎉 Project creation completed successfully!', 'success');
+
+                console.log('Project created successfully!');
+
+            } catch (error) {
+                console.error('Error creating project:', error);
+                addTerminalOutput(`Error: ${error.message}`, 'error');
+                hideLoading();
+                showError(`Failed to create project: ${error.message}`);
+            }
+        });
+
+        // Finalize project button
+        finalizeBtn.addEventListener('click', () => {
+            if (currentProjectId) {
+                // Redirect to Tracker 2 with project ID
+                window.location.href = `project-docs-tracker2.html?projectId=${currentProjectId}`;
+            } else {
+                showError('No project to finalize');
+            }
+        });
+
+        // Listen for auth state changes
+        onAuthStateChanged(auth, (user) => {
+            console.log('Auth state changed:', user ? user.email : 'No user');
+        });
+    </script>
+</body>
+</html>

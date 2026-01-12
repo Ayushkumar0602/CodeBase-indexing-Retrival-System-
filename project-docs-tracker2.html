@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whizan - Project Documentation (Tracker 2)</title>
+   <style>
+      /* General Body and Resets */
+      :root {
+            --primary-color: #10b981; /* A vibrant green */
+            --background-color: #111827; /* Dark gray */
+            --card-background-color: #1f2937; /* Lighter gray for cards */
+            --text-color: #d1d5db; /* Light gray text */
+            --text-color-dark: #f9fafb; /* White-ish text for titles */
+            --border-color: #374151; /* Gray for borders */
+            --pending-color: #f59e0b; /* Amber for pending status */
+            --completed-color: #10b981; /* Green for completed status */
+            --processing-color: #3b82f6; /* Blue for processing status */
+            --error-color: #ef4444; /* Red for error status */
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: var(--card-background-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-color-dark);
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text-color);
+            background-color: var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background-color: #4b5563;
+        }
+
+        .back-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Main Container and Typography */
+        .main-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .page-title {
+            font-size: 2.25rem;
+            font-weight: bold;
+            color: var(--text-color-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-color-dark);
+            margin-bottom: 1rem;
+        }
+        
+        h4 {
+            color: var(--text-color-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        /* Project Info & Model Selection Cards */
+        .project-info, .model-selection {
+            background-color: var(--card-background-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .project-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .detail-label {
+            font-size: 0.875rem;
+            color: var(--text-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-color-dark);
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .model-options {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .model-option {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .model-option input[type="radio"] {
+            display: none;
+        }
+
+        .model-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .model-option input[type="radio"]:checked + .model-card {
+            border-color: var(--primary-color);
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+
+        .model-icon {
+            font-size: 2rem;
+        }
+
+        .model-name {
+            font-weight: 600;
+            color: var(--text-color-dark);
+        }
+
+        .model-desc {
+            font-size: 0.875rem;
+            color: var(--text-color);
+        }
+
+        /* Workflow Steps */
+        .workflow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .workflow-step {
+            background-color: var(--card-background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .workflow-step.completed {
+            border-left: 4px solid var(--completed-color);
+        }
+        
+        .workflow-step.active {
+            border-left: 4px solid var(--processing-color);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            background-color: rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--border-color);
+            color: var(--text-color-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .workflow-step.completed .step-number {
+            background-color: var(--completed-color);
+        }
+
+        .step-title {
+            flex-grow: 1;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color-dark);
+        }
+
+        .step-status {
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            color: #111;
+            background-color: var(--pending-color);
+        }
+
+        .workflow-step.completed .step-status {
+             background-color: var(--completed-color);
+             color: #fff;
+        }
+
+        .step-content {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Forms and Buttons */
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-textarea {
+            width: 100%;
+            min-height: 150px;
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem;
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+        
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
+        }
+
+        .step-btn, .complete-btn, button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .step-btn:hover, .complete-btn:hover, .approve-btn:hover {
+            background-color: #059669; /* Darker green */
+        }
+        
+        .step-btn:disabled {
+            background-color: var(--border-color);
+            cursor: not-allowed;
+        }
+
+        .approve-btn {
+            background-color: var(--primary-color);
+        }
+        
+        .approve-btn:hover {
+            background-color: #059669;
+        }
+        
+        /* Action buttons within steps */
+        .schema-actions, .pages-actions, .visual-actions, .structure-actions, .pipeline-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .schema-actions button, .pages-actions button, .visual-actions button, .structure-actions button, .pipeline-actions button {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .schema-actions button:not(.approve-btn),
+        .pages-actions button:not(.approve-btn),
+        .visual-actions button:not(.approve-btn),
+        .structure-actions button:not(.approve-btn),
+        .pipeline-actions button:not(.approve-btn) {
+             background-color: var(--border-color);
+             color: var(--text-color-dark);
+        }
+        .schema-actions button:not(.approve-btn):hover,
+        .pages-actions button:not(.approve-btn):hover,
+        .visual-actions button:not(.approve-btn):hover,
+        .structure-actions button:not(.approve-btn):hover,
+        .pipeline-actions button:not(.approve-btn):hover {
+            background-color: #4b5563; /* subtle hover for neutral buttons */
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+            background-color: var(--background-color);
+        }
+        .chat-input {
+            display: flex;
+            border-top: 1px solid var(--border-color);
+        }
+        .chat-input input {
+            flex-grow: 1;
+            border: none;
+            background-color: transparent;
+            padding: 0.75rem;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+        .chat-input input:focus {
+            outline: none;
+        }
+        .chat-input button {
+            border-radius: 0;
+            padding: 0.75rem 1.5rem;
+        }
+        
+        /* Preview Panes */
+        .schema-preview, .pages-preview, .visual-preview, .structure-preview, .pipeline-preview {
+            background-color: var(--background-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .schema-content, .pages-list, .diagram-container, .structure-tree, .pipeline-steps {
+            background-color: #000;
+            color: #e5e5e5;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            min-height: 100px;
+        }
+
+        /* Final Actions */
+        .final-actions {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--card-background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .complete-btn {
+            width: 100%;
+            max-width: 300px;
+            font-size: 1.1rem;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+   </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">Whizan</div>
+        <a href="project.html" class="back-btn">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+            </svg>
+            Back to Projects
+        </a>
+    </header>
+
+    <main class="main-container">
+        <h1 class="page-title">Project Documentation & Planning</h1>
+        <p class="page-subtitle">Complete your project documentation and create a development pipeline</p>
+
+        <!-- Project Info Section -->
+        <div class="project-info" id="projectInfo">
+            <h3>Project Details</h3>
+            <div class="project-details">
+                <div class="detail-item">
+                    <div class="detail-label">Project Name</div>
+                    <div class="detail-value" id="projectName">Loading...</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Framework</div>
+                    <div class="detail-value" id="projectFramework">Loading...</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Project ID</div>
+                    <div class="detail-value" id="projectId">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Model Selection -->
+        <div class="model-selection">
+            <h3>Choose AI Model</h3>
+            <div class="model-options">
+                <label class="model-option">
+                    <input type="radio" name="aiModel" value="gemini" checked>
+                    <div class="model-card">
+                        <div class="model-icon">🤖</div>
+                        <div class="model-info">
+                            <div class="model-name">Gemini Flash 2.0</div>
+                            <div class="model-desc">Recommended for Firebase projects</div>
+                        </div>
+                    </div>
+                </label>
+                <label class="model-option">
+                    <input type="radio" name="aiModel" value="openrouter">
+                    <div class="model-card">
+                        <div class="model-icon">🔗</div>
+                        <div class="model-info">
+                            <div class="model-name">OpenRouter Models</div>
+                            <div class="model-desc">Multiple AI models available</div>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Workflow Steps -->
+        <div class="workflow-container">
+            <!-- Step 1: Requirements Collection -->
+            <div class="workflow-step" id="step1">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Requirements Collection</div>
+                    <div class="step-status" id="step1Status">Pending</div>
+                </div>
+                <div class="step-content">
+                    <div class="form-group">
+                        <label for="appOverview" class="form-label">Application Overview *</label>
+                        <textarea id="appOverview" class="form-textarea" placeholder="Describe your application in detail. What features should it have? Who are the users? What problems does it solve?"></textarea>
+                    </div>
+                    <button class="step-btn" onclick="startStep1()">Start Requirements Collection</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Conversational Refinement -->
+            <div class="workflow-step" id="step2">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Conversational Refinement</div>
+                    <div class="step-status" id="step2Status">Pending</div>
+                </div>
+                <div class="step-content">
+                    <div class="chat-container" id="chatContainer" style="display: none;">
+                        <div class="chat-messages" id="chatMessages"></div>
+                        <div class="chat-input">
+                            <input type="text" id="chatInput" placeholder="Ask questions or provide more details...">
+                            <button onclick="sendChatMessage()">Send</button>
+                        </div>
+                    </div>
+                    <button class="step-btn" id="step2Btn" onclick="startStep2()" disabled>Start AI Conversation</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Database Schema -->
+            <div class="workflow-step" id="step3">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Database Schema Generation</div>
+                    <div class="step-status" id="step3Status">Pending</div>
+                </div>
+                <div class="step-content">
+                    <div class="schema-preview" id="schemaPreview" style="display: none;">
+                        <h4>Proposed Firestore Schema</h4>
+                        <div class="schema-content" id="schemaContent"></div>
+                        <div class="schema-actions">
+                            <button onclick="editSchema()">Edit Schema</button>
+                            <button onclick="approveSchema()" class="approve-btn">Approve Schema</button>
+                        </div>
+                    </div>
+                    <button class="step-btn" id="step3Btn" onclick="startStep3()" disabled>Generate Schema</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Page Decision -->
+            <div class="workflow-step" id="step4">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Page Decision</div>
+                    <div class="step-status" id="step4Status">Pending</div>
+                </div>
+                <div class="step-content">
+                    <div class="pages-preview" id="pagesPreview" style="display: none;">
+                        <h4>Proposed Application Pages</h4>
+                        <div class="pages-list" id="pagesList"></div>
+                        <div class="pages-actions">
+                            <button onclick="editPages()">Edit Pages</button>
+                            <button onclick="approvePages()" class="approve-btn">Approve Pages</button>
+                        </div>
+                    </div>
+                    <button class="step-btn" id="step4Btn" onclick="startStep4()" disabled>Generate Pages</button>
+                </div>
+            </div>
+
+            <!-- Step 5: Visual Representation -->
+            <div class="workflow-step" id="step5">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Visual Representation</div>
+                    <div class="step-status" id="step5Status">Pending</div>
+                </div>
+                <div class="step-content">
+                    <div class="visual-preview" id="visualPreview" style="display: none;">
+                        <h4>Application Flow Diagram</h4>
+                        <div class="diagram-container" id="diagramContainer"></div>
+                        <div class="visual-actions">
+                            <button onclick="editVisual()">Edit Diagram</button>
+                            <button onclick="approveVisual()" class="approve-btn">Approve Diagram</button>
+                        </div>
+                    </div>
+                    <button class="step-btn" id="step5Btn" onclick="startStep5()" disabled>Generate Diagram</button>
+                </div>
+            </div>
+
+            <!-- Step 6: Folder Structure -->
+            <div class="workflow-step" id="step6">
+                <div class="step-header">
+                    <div class="step-number">6</div>
+                    <div class="step-title">Project Folder Structure</div>
+                    <div class="step-status" id="step6Status">Pending</div>
+                </div>
+                <div class="step-content">
+                    <div class="structure-preview" id="structurePreview" style="display: none;">
+                        <h4>Proposed Folder Structure</h4>
+                        <div class="structure-tree" id="structureTree"></div>
+                        <div class="structure-actions">
+                            <button onclick="editStructure()">Edit Structure</button>
+                            <button onclick="approveStructure()" class="approve-btn">Approve Structure</button>
+                        </div>
+                    </div>
+                    <button class="step-btn" id="step6Btn" onclick="startStep6()" disabled>Generate Structure</button>
+                </div>
+            </div>
+
+            <!-- Step 7: Development Pipeline -->
+            <div class="workflow-step" id="step7">
+                <div class="step-header">
+                    <div class="step-number">7</div>
+                    <div class="step-title">Development Pipeline</div>
+                    <div class="step-status" id="step7Status">Pending</div>
+                </div>
+                <div class="step-content">
+                    <div class="pipeline-preview" id="pipelinePreview" style="display: none;">
+                        <h4>Development Pipeline</h4>
+                        <div class="pipeline-steps" id="pipelineSteps"></div>
+                        <div class="pipeline-actions">
+                            <button onclick="editPipeline()">Edit Pipeline</button>
+                            <button onclick="approvePipeline()" class="approve-btn">Approve Pipeline</button>
+                        </div>
+                    </div>
+                    <button class="step-btn" id="step7Btn" onclick="startStep7()" disabled>Generate Pipeline</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Final Actions -->
+        <div class="final-actions" id="finalActions" style="display: none;">
+            <button class="complete-btn" onclick="completeDocumentation()">Complete Documentation</button>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <div class="loading-text" id="loadingText">Processing...</div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="tracker2-script.js"></script>
+</body>
+</html>

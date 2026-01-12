@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whizan - Projects</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: none;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #334155;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-email {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-icon {
+            width: 24px;
+            height: 24px;
+            color: #667eea;
+        }
+
+        .recent-folders {
+            grid-column: 1 / -1;
+        }
+
+        .created-projects {
+            grid-column: 1 / -1;
+            margin-top: 2rem;
+        }
+
+        .project-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 0.75rem;
+        }
+
+        .project-item:hover {
+            border-color: #667eea;
+            background: #f8fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+
+        .project-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .project-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .project-details h4 {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .project-details p {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .project-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-tracker1 {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-tracker2 {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .folder-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .folder-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .folder-item:hover {
+            border-color: #667eea;
+            background: #f8fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+
+        .folder-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .folder-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .folder-details h4 {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .folder-details p {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .folder-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #64748b;
+        }
+
+        .action-btn:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .action-btn.remove:hover {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .action-btn.delete {
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            background: #fff;
+        }
+
+        .action-btn.delete:hover {
+            background: #fee2e2;
+            color: #b91c1c;
+            border-color: #fca5a5;
+        }
+
+        .open-folder-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .open-folder-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
+        }
+
+        .new-project-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .new-project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(16, 185, 129, 0.3);
+        }
+
+        .card-content {
+            text-align: center;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #64748b;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-subtext {
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #e2e8f0;
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .sections-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 1rem;
+            }
+            
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <button class="back-btn" onclick="window.location.href='landing.html'" title="Back to Home">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+            <div class="logo">Whizan</div>
+        </div>
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-email" id="userEmail">user@example.com</div>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome back!</h1>
+            <p class="welcome-subtitle">Choose a project to get started or create something new</p>
+        </div>
+
+        <div class="sections-grid">
+            <!-- Recently Opened Folders -->
+            <div class="section recent-folders">
+                <h2 class="section-title">
+                    <svg class="section-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
+                    </svg>
+                    Recently Opened Folders
+                </h2>
+                
+                <div id="recentFoldersContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading recent folders...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Open a Folder -->
+            <div class="section open-folder-card" id="openFolderCard">
+                <div class="card-content">
+                    <div class="card-icon">📁</div>
+                    <h3 class="card-title">Open a Folder</h3>
+                    <p class="card-description">Browse and open an existing project folder</p>
+                </div>
+            </div>
+
+            <!-- Create a New Project -->
+            <div class="section new-project-card" id="newProjectCard">
+                <div class="card-content">
+                    <div class="card-icon">✨</div>
+                    <h3 class="card-title">Create New Project</h3>
+                    <p class="card-description">Start a new project with documentation</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Created Projects Section -->
+        <div class="section created-projects">
+            <h2 class="section-title">
+                <svg class="section-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Created Projects
+            </h2>
+            
+            <div id="createdProjectsContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Loading created projects...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        // Import Firebase from CDN
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+        import { 
+            getAuth, 
+            signOut,
+            onAuthStateChanged
+        } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+        import { 
+            getDatabase, 
+            ref, 
+            set, 
+            get 
+        } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js';
+        import { 
+            getFirestore, 
+            collection, 
+            query, 
+            where, 
+            getDocs,
+            doc,
+            deleteDoc
+        } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyABwi4-Rzl7T1qGLyWAWIAFcUxEivSX_BE",
+            authDomain: "whizan-coding--agent.firebaseapp.com",
+            databaseURL: "https://whizan-coding--agent-default-rtdb.firebaseio.com",
+            projectId: "whizan-coding--agent",
+            storageBucket: "whizan-coding--agent.firebasestorage.app",
+            messagingSenderId: "798036544047",
+            appId: "1:798036544047:web:ff7f8d3c44f40087e8d4da",
+            measurementId: "G-8DJEL3Q4RH"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+        const db = getFirestore(app);
+
+        // Project Manager
+        class ProjectManager {
+            constructor() {
+                this.recentFolders = [];
+                this.maxRecentFolders = 10;
+                this.loadRecentFolders();
+            }
+
+            // Load recent folders from localStorage only
+            async loadRecentFolders() {
+                try {
+                    console.log('Loading recent folders from localStorage');
+                    this.recentFolders = this.loadFromLocalStorage();
+                    console.log('Loaded', this.recentFolders.length, 'recent folders from localStorage');
+                } catch (error) {
+                    console.error('Error loading recent folders from localStorage:', error);
+                    this.recentFolders = [];
+                }
+            }
+
+            // Add a folder to recent folders
+            async addRecentFolder(folderPath, folderName = null) {
+                try {
+                    const folderInfo = {
+                        path: folderPath,
+                        name: folderName || this.getFolderName(folderPath),
+                        lastOpened: new Date().toISOString(),
+                        id: this.generateId()
+                    };
+
+                    console.log('Adding folder to recent:', folderInfo.name);
+
+                    // Remove if already exists
+                    this.recentFolders = this.recentFolders.filter(folder => folder.path !== folderPath);
+                    
+                    // Add to beginning
+                    this.recentFolders.unshift(folderInfo);
+                    
+                    // Keep only max number of folders
+                    if (this.recentFolders.length > this.maxRecentFolders) {
+                        this.recentFolders = this.recentFolders.slice(0, this.maxRecentFolders);
+                    }
+
+                    // Save to localStorage only
+                    this.saveToLocalStorage();
+                    console.log('Successfully saved to localStorage');
+
+                    return folderInfo;
+                } catch (error) {
+                    console.error('Error adding recent folder to localStorage:', error);
+                    // Fallback to direct localStorage manipulation
+                    this.addToLocalStorage(folderPath, folderName);
+                    console.log('Saved to localStorage as fallback');
+                }
+            }
+
+            // Remove a folder from recent folders
+            async removeRecentFolder(folderPath) {
+                try {
+                    this.recentFolders = this.recentFolders.filter(folder => folder.path !== folderPath);
+                    
+                    // Update localStorage only
+                    this.saveToLocalStorage();
+                    console.log('Successfully removed folder from localStorage');
+                } catch (error) {
+                    console.error('Error removing recent folder:', error);
+                    // Fallback to localStorage only
+                    this.removeFromLocalStorage(folderPath);
+                }
+            }
+
+            // Get all recent folders
+            getRecentFolders() {
+                return [...this.recentFolders];
+            }
+
+            // Open a folder (this will be called by the main app)
+            async openFolder(folderPath) {
+                try {
+                    console.log('Opening folder:', folderPath);
+                    
+                    // Add to recent folders FIRST
+                    await this.addRecentFolder(folderPath);
+                    
+                    // Force re-render of recent folders
+                    if (typeof renderRecentFolders === 'function') {
+                        renderRecentFolders();
+                    }
+                    
+                    // Notify the main app to open the folder
+                    if (window.electronAPI) {
+                        const result = await window.electronAPI.openFolder(folderPath);
+                        console.log('Folder opened result:', result);
+                    } else {
+                        // Fallback for web version
+                        console.log('electronAPI not available, folder opened locally');
+                    }
+                } catch (error) {
+                    console.error('Error opening folder:', error);
+                    throw error;
+                }
+            }
+
+            // Create a new project
+            async createNewProject() {
+                try {
+                    // Redirect to project documentation page
+                    window.location.href = 'project-docs.html';
+                } catch (error) {
+                    console.error('Error creating new project:', error);
+                }
+            }
+
+            // Helper methods for localStorage fallback
+            loadFromLocalStorage() {
+                try {
+                    const stored = localStorage.getItem('whizan_recent_folders');
+                    return stored ? JSON.parse(stored) : [];
+                } catch (error) {
+                    console.error('Error loading from localStorage:', error);
+                    return [];
+                }
+            }
+
+            saveToLocalStorage() {
+                try {
+                    localStorage.setItem('whizan_recent_folders', JSON.stringify(this.recentFolders));
+                } catch (error) {
+                    console.error('Error saving to localStorage:', error);
+                }
+            }
+
+            addToLocalStorage(folderPath, folderName) {
+                const folderInfo = {
+                    path: folderPath,
+                    name: folderName || this.getFolderName(folderPath),
+                    lastOpened: new Date().toISOString(),
+                    id: this.generateId()
+                };
+
+                let folders = this.loadFromLocalStorage();
+                folders = folders.filter(folder => folder.path !== folderPath);
+                folders.unshift(folderInfo);
+                
+                if (folders.length > this.maxRecentFolders) {
+                    folders = folders.slice(0, this.maxRecentFolders);
+                }
+
+                this.recentFolders = folders;
+                this.saveToLocalStorage();
+            }
+
+            removeFromLocalStorage(folderPath) {
+                let folders = this.loadFromLocalStorage();
+                folders = folders.filter(folder => folder.path !== folderPath);
+                this.recentFolders = folders;
+                this.saveToLocalStorage();
+            }
+
+            // Helper methods
+            getFolderName(path) {
+                return path.split(/[/\\]/).pop() || path;
+            }
+
+            generateId() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2);
+            }
+        }
+
+        // Create project manager instance
+        const projectManager = new ProjectManager();
+
+        // Auth service functions
+        function getCurrentUser() {
+            return auth.currentUser;
+        }
+
+        function isAuthenticated() {
+            return !!auth.currentUser;
+        }
+
+        async function signOutUser() {
+            try {
+                await signOut(auth);
+                return { success: true };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        // DOM elements
+        const userAvatar = document.getElementById('userAvatar');
+        const userEmail = document.getElementById('userEmail');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const recentFoldersContainer = document.getElementById('recentFoldersContainer');
+        const openFolderCard = document.getElementById('openFolderCard');
+        const newProjectCard = document.getElementById('newProjectCard');
+        const createdProjectsContainer = document.getElementById('createdProjectsContainer');
+
+        // Initialize user info
+        function updateUserInfo() {
+            const user = getCurrentUser();
+            if (user) {
+                const email = user.email;
+                const name = user.displayName || email.split('@')[0];
+                
+                userEmail.textContent = email;
+                userAvatar.textContent = name.charAt(0).toUpperCase();
+            }
+        }
+
+        // Render recent folders
+        function renderRecentFolders() {
+            const folders = projectManager.getRecentFolders();
+            
+            if (folders.length === 0) {
+                recentFoldersContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📁</div>
+                        <div class="empty-text">No recent folders</div>
+                        <div class="empty-subtext">Open a folder to see it here</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const foldersHTML = folders.map(folder => `
+                <div class="folder-item" data-path="${folder.path}">
+                    <div class="folder-info">
+                        <div class="folder-icon">📁</div>
+                        <div class="folder-details">
+                            <h4>${folder.name}</h4>
+                            <p>${folder.path}</p>
+                        </div>
+                    </div>
+                    <div class="folder-actions">
+                        <button class="action-btn" title="Open folder" onclick="openFolder('${folder.path}')">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
+                                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn remove" title="Remove from recent" onclick="removeFolder('${folder.path}')">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            recentFoldersContainer.innerHTML = foldersHTML;
+        }
+
+        // Load created projects from Firestore
+        async function loadCreatedProjects() {
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    console.log('No user authenticated, cannot load created projects');
+                    return;
+                }
+
+                console.log('Loading created projects for user:', user.email);
+                
+                const projectsQuery = query(
+                    collection(db, 'UserProjects'),
+                    where('userId', '==', user.uid)
+                );
+                
+                const querySnapshot = await getDocs(projectsQuery);
+                const projects = [];
+                
+                querySnapshot.forEach((doc) => {
+                    projects.push({ id: doc.id, ...doc.data() });
+                });
+                
+                console.log('Loaded', projects.length, 'created projects');
+                renderCreatedProjects(projects);
+                
+            } catch (error) {
+                console.error('Error loading created projects:', error);
+                createdProjectsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">⚠️</div>
+                        <div class="empty-text">Error loading projects</div>
+                        <div class="empty-subtext">${error.message}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Render created projects
+        function renderCreatedProjects(projects) {
+            if (projects.length === 0) {
+                createdProjectsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-text">No created projects</div>
+                        <div class="empty-subtext">Create your first project to see it here</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const projectsHTML = projects.map(project => {
+                const statusClass = getStatusClass(project.status);
+                const statusText = getStatusText(project.status);
+                
+                return `
+                    <div class="project-item" onclick="handleProjectClick('${project.projectId}', '${project.status}')">
+                        <div class="project-info">
+                            <div class="project-icon">📋</div>
+                            <div class="project-details">
+                                <h4>${project.projectName}</h4>
+                                <p>${project.framework} • ${project.appName}</p>
+                            </div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:.5rem;">
+                            <div class="project-status ${statusClass}">${statusText}</div>
+                            <button class="action-btn delete" title="Delete project" onclick="deleteProject(event, '${project.projectId}')">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            createdProjectsContainer.innerHTML = projectsHTML;
+        }
+
+        // Get status class for styling
+        function getStatusClass(status) {
+            switch (status) {
+                case 'tracker1_completed':
+                    return 'status-tracker1';
+                case 'tracker2_completed':
+                    return 'status-tracker2';
+                case 'completed':
+                    return 'status-completed';
+                default:
+                    return 'status-tracker1';
+            }
+        }
+
+        // Get status text
+        function getStatusText(status) {
+            switch (status) {
+                case 'tracker1_completed':
+                    return 'Tracker 1';
+                case 'tracker2_completed':
+                    return 'Tracker 2';
+                case 'completed':
+                    return 'Completed';
+                default:
+                    return 'Tracker 1';
+            }
+        }
+
+        // Handle project click
+        window.handleProjectClick = (projectId, status) => {
+            console.log('Project clicked:', projectId, status);
+            
+            if (status === 'tracker1_completed') {
+                // Redirect to Tracker 2
+                window.location.href = `project-docs-tracker2.html?projectId=${projectId}`;
+            } else if (status === 'tracker2_completed') {
+                // Future: Redirect to next stage
+                alert('Project completed! Next stage coming soon.');
+            } else {
+                // Default: Redirect to Tracker 2
+                window.location.href = `project-docs-tracker2.html?projectId=${projectId}`;
+            }
+        };
+
+        // Event handlers
+        logoutBtn.addEventListener('click', async () => {
+            console.log('Logout button clicked');
+            try {
+                await signOutUser();
+                console.log('Sign out successful');
+                // Redirect will be handled by auth state listener
+            } catch (error) {
+                console.error('Error signing out:', error);
+                alert('Error signing out: ' + error.message);
+            }
+        });
+
+        openFolderCard.addEventListener('click', async () => {
+            console.log('Open folder button clicked');
+
+            // Trigger file dialog to select folder
+            if (window.electronAPI) {
+                try {
+                    const folderPath = await window.electronAPI.selectFolder();
+                    if (folderPath) {
+                        console.log('Selected folder:', folderPath);
+                        await projectManager.openFolder(folderPath);
+                        // Force refresh the recent folders display
+                        setTimeout(() => {
+                            renderRecentFolders();
+                        }, 500);
+                    }
+                } catch (error) {
+                    console.error('Error selecting folder:', error);
+                    alert('Error selecting folder: ' + error.message);
+                }
+            } else {
+                // Fallback for web version
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.webkitdirectory = true;
+                input.addEventListener('change', async (e) => {
+                    if (e.target.files.length > 0) {
+                        const folderPath = e.target.files[0].path;
+                        console.log('Selected folder:', folderPath);
+                        await projectManager.openFolder(folderPath);
+                    }
+                });
+                input.click();
+            }
+        });
+
+        newProjectCard.addEventListener('click', async () => {
+            console.log('New project button clicked');
+            
+            try {
+                console.log('Navigating to project documentation page...');
+                await projectManager.createNewProject();
+            } catch (error) {
+                console.error('Error creating new project:', error);
+                alert('Error creating new project: ' + error.message);
+            }
+        });
+
+        // Global functions for folder actions
+        window.openFolder = async (folderPath) => {
+            console.log('Opening folder:', folderPath);
+
+            try {
+                await projectManager.openFolder(folderPath);
+            } catch (error) {
+                console.error('Error opening folder:', error);
+                alert('Error opening folder: ' + error.message);
+            }
+        };
+
+        window.removeFolder = async (folderPath) => {
+            console.log('Removing folder:', folderPath);
+
+            try {
+                await projectManager.removeRecentFolder(folderPath);
+                renderRecentFolders();
+            } catch (error) {
+                console.error('Error removing folder:', error);
+                alert('Error removing folder: ' + error.message);
+            }
+        };
+
+        // Delete a project and all related data under this app's known collections
+        window.deleteProject = async (event, projectId) => {
+            event.stopPropagation();
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    alert('You must be logged in to delete a project.');
+                    return;
+                }
+
+                const confirmed = confirm('Are you sure you want to permanently delete this project and its stored data? This action cannot be undone.');
+                if (!confirmed) return;
+
+                // Find the document in UserProjects by userId and projectId
+                const projectsQuery = query(
+                    collection(db, 'UserProjects'),
+                    where('userId', '==', user.uid),
+                    where('projectId', '==', projectId)
+                );
+                const snap = await getDocs(projectsQuery);
+
+                if (snap.empty) {
+                    alert('Project not found or already deleted.');
+                    return;
+                }
+
+                // Delete all matching docs (should be one)
+                const deletes = [];
+                snap.forEach((d) => {
+                    deletes.push(deleteDoc(doc(db, 'UserProjects', d.id)));
+                });
+                await Promise.all(deletes);
+
+                // Refresh list
+                await loadCreatedProjects();
+                alert('Project deleted successfully.');
+            } catch (error) {
+                console.error('Error deleting project:', error);
+                alert('Failed to delete project: ' + error.message);
+            }
+        };
+
+        // Initialize the page after Firebase is ready
+        function initializePage() {
+            console.log('Initializing project page...');
+            
+            // Check if user is authenticated
+            const currentUser = auth.currentUser;
+            if (!currentUser) {
+                console.log('No user authenticated, redirecting to login...');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            console.log('User authenticated:', currentUser.email);
+            
+            // Update UI
+            updateUserInfo();
+            
+            // Load and render recent folders
+            projectManager.loadRecentFolders().then(() => {
+                renderRecentFolders();
+            }).catch(error => {
+                console.error('Error loading recent folders:', error);
+                renderRecentFolders(); // Show empty state
+            });
+
+            // Load created projects
+            loadCreatedProjects();
+        }
+
+        // Listen for auth state changes
+        onAuthStateChanged(auth, (user) => {
+            console.log('Auth state changed:', user ? user.email : 'No user');
+            
+            if (user) {
+                // User is signed in
+                if (window.location.pathname.includes('login.html') || 
+                    window.location.pathname.includes('signup.html')) {
+                    window.location.href = 'project.html';
+                } else if (window.location.pathname.includes('project.html') || 
+                           window.location.pathname.includes('project-docs.html')) {
+                    // User is on project pages, just update UI
+                    updateUserInfo();
+                    projectManager.loadRecentFolders().then(() => {
+                        renderRecentFolders();
+                    });
+                }
+            } else {
+                // User is signed out
+                if (!window.location.pathname.includes('login.html') && 
+                    !window.location.pathname.includes('signup.html')) {
+                    window.location.href = 'login.html';
+                }
+            }
+        });
+
+        // Initialize page after a short delay to ensure Firebase is ready
+        setTimeout(() => {
+            initializePage();
+        }, 1000);
+
+        // Listen for folder updates
+        setInterval(() => {
+            if (auth.currentUser) {
+                renderRecentFolders();
+            }
+        }, 10000); // Update every 10 seconds
+    </script>
+</body>
+</html>

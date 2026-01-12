@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test - Debug 400 Errors</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Test - Debug 400 Errors</h1>
+    
+    <div class="test-section">
+        <h2>Gemini API Test</h2>
+        <button class="test-button" onclick="testGeminiAPI()">Test Gemini API</button>
+        <div id="geminiResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>OpenRouter API Test</h2>
+        <button class="test-button" onclick="testOpenRouterAPI()">Test OpenRouter API</button>
+        <div id="openRouterResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Console Log</h2>
+        <div id="consoleLog" class="log"></div>
+        <button class="test-button" onclick="clearLog()">Clear Log</button>
+    </div>
+
+    <script type="module">
+        // API Configuration
+        const GEMINI_API_KEY = "AIzaSyBDA_wIQPBjWVVelfjzAToKhQfkkGYDyac";
+        const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+        const OPENROUTER_API_KEY = "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";
+        const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
+
+        // Logging function
+        function log(message, type = 'info') {
+            const timestamp = new Date().toISOString();
+            const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
+            document.getElementById('consoleLog').textContent += logEntry;
+            console.log(logEntry);
+        }
+
+        // Test Gemini API
+        window.testGeminiAPI = async function() {
+            const resultDiv = document.getElementById('geminiResult');
+            resultDiv.innerHTML = '<div class="success">Testing Gemini API...</div>';
+            
+            try {
+                log('Testing Gemini API...');
+                
+                const requestBody = {
+                    contents: [{
+                        parts: [{
+                            text: "Hello, this is a test message. Please respond with 'Test successful' if you can see this."
+                        }]
+                    }],
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 100
+                    }
+                };
+                
+                log(`Request URL: ${GEMINI_API_URL}?key=${GEMINI_API_KEY.substring(0, 10)}...`);
+                log(`Request Body: ${JSON.stringify(requestBody, null, 2)}`);
+                
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                log(`Response Status: ${response.status} ${response.statusText}`);
+                log(`Response Headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}`);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    log(`Error Response: ${errorText}`, 'error');
+                    resultDiv.innerHTML = `<div class="error">Gemini API Error: ${response.status} - ${errorText}</div>`;
+                    return;
+                }
+                
+                const data = await response.json();
+                log(`Success Response: ${JSON.stringify(data, null, 2)}`);
+                
+                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                    const text = data.candidates[0].content.parts[0].text.trim();
+                    resultDiv.innerHTML = `<div class="success">Gemini API Success! Response: "${text}"</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">Gemini API returned unexpected response format</div>`;
+                }
+                
+            } catch (error) {
+                log(`Gemini API Error: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">Gemini API Error: ${error.message}</div>`;
+            }
+        };
+
+        // Test OpenRouter API
+        window.testOpenRouterAPI = async function() {
+            const resultDiv = document.getElementById('openRouterResult');
+            resultDiv.innerHTML = '<div class="success">Testing OpenRouter API...</div>';
+            
+            try {
+                log('Testing OpenRouter API...');
+                
+                const requestBody = {
+                    model: 'deepseek/deepseek-chat-v3-0324:free',
+                    messages: [
+                        {
+                            role: 'user',
+                            content: "Hello, this is a test message. Please respond with 'Test successful' if you can see this."
+                        }
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 100
+                };
+                
+                log(`Request URL: ${OPENROUTER_API_URL}`);
+                log(`Request Body: ${JSON.stringify(requestBody, null, 2)}`);
+                
+                const response = await fetch(OPENROUTER_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                        'HTTP-Referer': window.location.origin,
+                        'X-Title': 'Whizan Project Documentation'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                log(`Response Status: ${response.status} ${response.statusText}`);
+                log(`Response Headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}`);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    log(`Error Response: ${errorText}`, 'error');
+                    resultDiv.innerHTML = `<div class="error">OpenRouter API Error: ${response.status} - ${errorText}</div>`;
+                    return;
+                }
+                
+                const data = await response.json();
+                log(`Success Response: ${JSON.stringify(data, null, 2)}`);
+                
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                    const text = data.choices[0].message.content.trim();
+                    resultDiv.innerHTML = `<div class="success">OpenRouter API Success! Response: "${text}"</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">OpenRouter API returned unexpected response format</div>`;
+                }
+                
+            } catch (error) {
+                log(`OpenRouter API Error: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">OpenRouter API Error: ${error.message}</div>`;
+            }
+        };
+
+        // Clear log
+        window.clearLog = function() {
+            document.getElementById('consoleLog').textContent = '';
+        };
+
+        // Initialize
+        log('API Test page loaded. Click the test buttons to debug 400 errors.');
+    </script>
+</body>
+</html>
+

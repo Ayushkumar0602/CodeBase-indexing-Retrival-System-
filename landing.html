@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whizan - Welcome</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .landing-container {
+            text-align: center;
+            color: white;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .loading {
+            font-size: 1rem;
+            opacity: 0.7;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.1;
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+                opacity: 0.3;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 4rem;
+            }
+            .tagline {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="landing-container">
+        <div class="logo">Whizan</div>
+        <div class="tagline">Your Intelligent Code Editor</div>
+        <div class="loading">
+            Loading your workspace
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 10 + 5 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Initialize particles
+        createParticles();
+
+        // Check authentication status and redirect after 4 seconds
+        setTimeout(async () => {
+            try {
+                // Import Firebase auth service
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
+                const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js');
+                
+                const firebaseConfig = {
+                    apiKey: "AIzaSyABwi4-Rzl7T1qGLyWAWIAFcUxEivSX_BE",
+                    authDomain: "whizan-coding--agent.firebaseapp.com",
+                    databaseURL: "https://whizan-coding--agent-default-rtdb.firebaseio.com",
+                    projectId: "whizan-coding--agent",
+                    storageBucket: "whizan-coding--agent.firebasestorage.app",
+                    messagingSenderId: "798036544047",
+                    appId: "1:798036544047:web:ff7f8d3c44f40087e8d4da",
+                    measurementId: "G-8DJEL3Q4RH"
+                };
+                
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                
+                // Add a small delay to ensure Firebase is fully initialized
+                setTimeout(() => {
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            // User is signed in, redirect to project page
+                            window.location.href = 'project.html';
+                        } else {
+                            // User is signed out, redirect to login page
+                            window.location.href = 'login.html';
+                        }
+                    });
+                }, 500);
+            } catch (error) {
+                console.error('Error checking auth status:', error);
+                // Fallback to login page
+                window.location.href = 'login.html';
+            }
+        }, 4000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://unpkg.com http://127.0.0.1:* ws://localhost:*; img-src 'self' data: http://127.0.0.1:* https://*; style-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' data: https://cdnjs.cloudflare.com; connect-src 'self' http://127.0.0.1:* https://cdnjs.cloudflare.com https://unpkg.com ws://localhost:*; worker-src 'self' blob:;" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cursor AI Editor</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@xterm/xterm@5.5.0/css/xterm.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@vscode/codicons/dist/codicon.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Main workspace layout -->
+      <div id="workspace">
+        <!-- Activity Bar -->
+        <nav id="activitybar" aria-label="Activity Bar">
+          <div class="activity-group">
+            <button id="actExplorer" class="ab-item active" title="Explorer (Ctrl+Shift+E)">
+              <i class="codicon codicon-files"></i>
+            </button>
+            <button id="actSearch" class="ab-item" title="Search (Ctrl+Shift+F)">
+              <i class="codicon codicon-search"></i>
+            </button>
+            <button id="actChat" class="ab-item" title="AI Chat (Ctrl+K)">
+              <i class="codicon codicon-comment-discussion"></i>
+            </button>
+            <button id="actCodebase" class="ab-item" title="Codebase Understanding">
+              <i class="codicon codicon-library"></i>
+            </button>
+          </div>
+          <div class="activity-spacer"></div>
+          <div class="activity-group">
+            <button id="actAgent" class="ab-item" title="Agent Mode (Ctrl+Shift+A)">
+              <i class="codicon codicon-robot"></i>
+            </button>
+            <button id="actTerminal" class="ab-item" title="Terminal (Ctrl+`)">
+              <i class="codicon codicon-terminal"></i>
+            </button>
+            <button id="actSettings" class="ab-item" title="Settings">
+              <i class="codicon codicon-gear"></i>
+            </button>
+          </div>
+        </nav>
+
+        <!-- Sidebar -->
+        <aside id="sidebar" aria-label="Side Bar">
+          <!-- Explorer Panel -->
+          <div id="explorerPanel" class="sidebar-panel">
+            <div class="panel-header">
+              <span class="panel-title">EXPLORER</span>
+              <div class="panel-actions">
+                <button id="btnNewFile" title="New File" class="action-button">
+                  <i class="codicon codicon-new-file"></i>
+                </button>
+                <button id="btnNewFolder" title="New Folder" class="action-button">
+                  <i class="codicon codicon-new-folder"></i>
+                </button>
+                <button id="btnOpen" title="Open Folder" class="action-button">
+                  <i class="codicon codicon-folder-opened"></i>
+                </button>
+                <button id="btnRefresh" title="Refresh" class="action-button">
+                  <i class="codicon codicon-refresh"></i>
+                </button>
+              </div>
+            </div>
+            <div id="tree" class="file-tree"></div>
+          </div>
+
+          <!-- Search Panel -->
+          <div id="searchPanel" class="sidebar-panel hidden">
+            <div class="panel-header">
+              <span class="panel-title">SEARCH</span>
+              <div class="panel-actions">
+                <button id="btnClearSearch" title="Clear Search" class="action-button">
+                  <i class="codicon codicon-clear-all"></i>
+                </button>
+              </div>
+            </div>
+            <div class="search-input-container">
+              <input id="searchInput" placeholder="Search files..." class="search-input" />
+              <input id="replaceInput" placeholder="Replace..." class="search-input hidden" />
+              <div class="search-buttons">
+                <button id="btnToggleReplace" title="Toggle Replace" class="icon-button">
+                  <i class="codicon codicon-chevron-right"></i>
+                </button>
+                <button id="btnSearchOptions" title="Search Options" class="icon-button">
+                  <i class="codicon codicon-case-sensitive"></i>
+                </button>
+              </div>
+            </div>
+            <div id="searchResults" class="search-results"></div>
+          </div>
+
+          <!-- AI Chat Panel -->
+          <div id="chatPanel" class="sidebar-panel hidden">
+            <div class="panel-header">
+              <span class="panel-title">AI CHAT</span>
+              <div class="panel-actions">
+                <div class="model-selector">
+                  <select id="aiModelSelect" class="model-select">
+                    <option value="gemini" selected>Gemini Flash 2.0 (Default)</option>
+                    <option value="deepseek">DeepSeek Chat v3</option>
+                    <option value="deepseekR1">DeepSeek R1</option>
+                    <option value="deepseekR1Preview">DeepSeek R1 Preview</option>
+                    <option value="deepcoder">DeepCoder 14B Preview</option>
+                    <option value="qwen">Qwen 3 Coder</option>
+                  </select>
+                </div>
+                <button id="btnClearChat" title="Clear Chat" class="action-button">
+                  <i class="codicon codicon-clear-all"></i>
+                </button>
+                <button id="btnPrivacyMode" title="Privacy Mode" class="action-button">
+                  <i class="codicon codicon-shield"></i>
+                </button>
+              </div>
+            </div>
+            <div id="chatMessages" class="chat-messages"></div>
+            <div class="chat-input-container">
+              <div class="chat-context-tags" id="chatContextTags"></div>
+              <div class="chat-input-wrapper">
+                <textarea id="chatInput" placeholder="Ask AI about your code... (Type @ for context)" rows="3"></textarea>
+                <button id="btnSendChat" class="send-button">
+                  <i class="codicon codicon-send"></i>
+                </button>
+              </div>
+              <div class="chat-suggestions" id="chatSuggestions">
+                <span class="suggestion-tag">@Codebase</span>
+                <span class="suggestion-tag">@Web</span>
+                <span class="suggestion-tag">@Docs</span>
+                <span class="suggestion-tag">@File</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Codebase Understanding Panel -->
+          <div id="codebasePanel" class="sidebar-panel hidden">
+            <div class="panel-header">
+              <span class="panel-title">CODEBASE</span>
+              <div class="panel-actions">
+                <button id="btnIndexCodebase" title="Re-index Codebase" class="action-button">
+                  <i class="codicon codicon-database"></i>
+                </button>
+              </div>
+            </div>
+            <div class="codebase-search">
+              <input id="codebaseQuery" placeholder="Search functions, classes, variables..." class="search-input" />
+            </div>
+            <div id="codebaseResults" class="codebase-results"></div>
+          </div>
+
+          <!-- Agent Mode Panel -->
+          <div id="agentPanel" class="sidebar-panel hidden">
+            <div class="panel-header">
+              <span class="panel-title">AGENT MODE</span>
+              <div class="panel-actions">
+                <div class="model-selector">
+                  <select id="agentModelSelect" class="model-select">
+                    <option value="deepseek">DeepSeek Chat v3</option>
+                    <option value="deepseekR1">DeepSeek R1</option>
+                    <option value="deepseekR1Preview">DeepSeek R1 Preview</option>
+                    <option value="deepcoder">DeepCoder 14B Preview</option>
+                    <option value="qwen">Qwen 3 Coder</option>
+                    <option value="gemini">Gemini Flash 2.0</option>
+                  </select>
+                </div>
+                <div class="agent-status" id="agentStatus">Ready</div>
+              </div>
+            </div>
+            <div class="agent-input-container">
+              <!-- File Selection Area -->
+              <div class="file-selection-area">
+                <div class="file-selection-header">
+                  <span class="file-selection-title">
+                    <i class="codicon codicon-files"></i>
+                    Selected Files
+                  </span>
+                  <button id="btnClearFiles" class="file-selection-clear" title="Clear all selected files">
+                    <i class="codicon codicon-clear-all"></i>
+                  </button>
+                </div>
+                <div id="selectedFilesList" class="selected-files-list">
+                  <div class="no-files-selected">
+                    <i class="codicon codicon-info"></i>
+                    No files selected. Use the file tree to select files for context.
+                  </div>
+                </div>
+                <div class="file-selection-actions">
+                  <button id="btnSelectCurrentFile" class="file-selection-action">
+                    <i class="codicon codicon-file"></i>
+                    Add Current File
+                  </button>
+                  <button id="btnSelectFromTree" class="file-selection-action">
+                    <i class="codicon codicon-folder-opened"></i>
+                    Browse Files
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Agent Input -->
+              <div class="agent-input-wrapper">
+                <textarea id="agentInput" placeholder="Describe what you want me to build or modify... (Selected files will be included as context)" rows="4"></textarea>
+                <div class="agent-buttons">
+                  <button id="btnCheckStatus" class="agent-button secondary">
+                    <i class="codicon codicon-info"></i>
+                    Check Status
+                  </button>
+                  <button id="btnStartAgent" class="agent-button">
+                    <i class="codicon codicon-play"></i>
+                    Start Agent
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="safety-controls">
+              <div class="safety-buttons">
+                <button id="undoBtn" class="safety-button" title="Undo last action" disabled>
+                  <i class="codicon codicon-undo"></i>
+                  Undo
+                </button>
+                <button id="clearUndoBtn" class="safety-button" title="Clear undo stack">
+                  <i class="codicon codicon-clear-all"></i>
+                  Clear Undo
+                </button>
+                                  <button id="cleanupBackupsBtn" class="safety-button" title="Clean up old backups">
+                    <i class="codicon codicon-trash"></i>
+                    Cleanup
+                  </button>
+                  <button id="emergencyConfirmBtn" class="safety-button emergency" title="Emergency confirm if stuck">
+                    <i class="codicon codicon-warning"></i>
+                    Emergency
+                  </button>
+              </div>
+            </div>
+            <div id="agentTasks" class="agent-tasks"></div>
+            <div id="agentProgress" class="agent-progress hidden"></div>
+          </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main id="main" aria-label="Main">
+          <!-- Tab Bar -->
+          <section id="tabBar" class="tab-bar">
+            <div id="tabList" class="tab-list"></div>
+            <div class="tab-actions">
+              <button id="btnSave" title="Save (Ctrl+S)" class="tab-action">
+                <i class="codicon codicon-save"></i>
+              </button>
+              <button id="btnSaveAll" title="Save All" class="tab-action">
+                <i class="codicon codicon-save-all"></i>
+              </button>
+            </div>
+          </section>
+
+          <!-- Breadcrumbs -->
+          <section id="breadcrumbs" class="breadcrumbs"></section>
+
+          <!-- Editor Pane -->
+          <section id="editorPane" class="editor-pane">
+            <div id="editor" class="editor-container"></div>
+            
+            <!-- AI Autocomplete Suggestions -->
+            <div id="aiSuggestions" class="ai-suggestions hidden">
+              <div class="suggestion-header">
+                <span>AI Suggestion</span>
+                <div class="suggestion-actions">
+                  <button id="btnAcceptSuggestion" class="suggestion-action">
+                    <i class="codicon codicon-check"></i>
+                    Accept
+                  </button>
+                  <button id="btnRejectSuggestion" class="suggestion-action">
+                    <i class="codicon codicon-close"></i>
+                    Reject
+                  </button>
+                </div>
+              </div>
+              <div id="suggestionContent" class="suggestion-content"></div>
+            </div>
+
+            <!-- Quick Question Overlay -->
+            <div id="quickQuestion" class="quick-question hidden">
+              <div class="quick-question-content">
+                <h3>Quick Question</h3>
+                <p id="questionResponse">Analyzing your code...</p>
+                <button id="btnCloseQuestion" class="close-button">
+                  <i class="codicon codicon-close"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Code Generation Overlay -->
+            <div id="codeGeneration" class="code-generation hidden">
+              <div class="code-gen-content">
+                <h3>Generate Code</h3>
+                <textarea id="codeGenPrompt" placeholder="Describe what you want to generate..."></textarea>
+                <div class="code-gen-actions">
+                  <button id="btnGenerateCode" class="primary-button">Generate</button>
+                  <button id="btnCancelGeneration" class="secondary-button">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Resize Handle -->
+          <div id="resizeHandle" class="resize-handle"></div>
+
+          <!-- Terminal Pane -->
+          <section id="terminalPane" class="terminal-pane hidden" aria-label="Terminal">
+            <div class="terminal-header">
+              <div id="terminalTabs" class="terminal-tabs">
+                <div id="terminalTabList" class="terminal-tab-list"></div>
+                <button id="btnNewTerminal" title="New Terminal" class="new-terminal-button">
+                  <i class="codicon codicon-plus"></i>
+                </button>
+              </div>
+              <div class="terminal-actions">
+                <button id="btnKillTerminal" title="Kill Terminal" class="terminal-action">
+                  <i class="codicon codicon-trash"></i>
+                </button>
+                <button id="btnMaximizeTerminal" title="Maximize Terminal" class="terminal-action">
+                  <i class="codicon codicon-chevron-up"></i>
+                </button>
+              </div>
+            </div>
+            <div id="terminalsContainer" class="terminals-container"></div>
+          </section>
+        </main>
+      </div>
+
+      <!-- Status Bar -->
+      <footer id="statusBar" class="status-bar">
+        <div class="status-left">
+          <span id="statusBranch" class="status-item">
+            <i class="codicon codicon-git-branch"></i>
+            main
+          </span>
+          <span id="statusProblems" class="status-item">
+            <i class="codicon codicon-error"></i>
+            0 problems
+          </span>
+          <span id="statusAI" class="status-item ai-status">
+            <i class="codicon codicon-lightbulb"></i>
+            <span id="aiStatusText">AI Ready</span>
+          </span>
+        </div>
+        <div class="status-center">
+          <span id="statusPosition" class="status-item">Ln 1, Col 1</span>
+          <span id="statusIndent" class="status-item">Spaces: 2</span>
+          <span id="statusEncoding" class="status-item">UTF-8</span>
+          <span id="statusEOL" class="status-item">LF</span>
+          <span id="statusLanguage" class="status-item">Plain Text</span>
+        </div>
+        <div class="status-right">
+          <span id="statusPrivacy" class="status-item privacy-indicator hidden">
+            <i class="codicon codicon-shield"></i>
+            Privacy Mode
+          </span>
+          <span class="status-item">Cursor AI</span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Command Palette -->
+    <div id="commandPalette" class="command-palette hidden">
+      <div class="command-palette-content">
+        <input id="commandInput" placeholder="Type a command or search..." class="command-input" />
+        <div id="commandResults" class="command-results"></div>
+      </div>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="modalOverlay" class="modal-overlay hidden" role="dialog" aria-modal="true">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="modalTitle" class="modal-title">Dialog</h3>
+          <button id="modalClose" class="modal-close">
+            <i class="codicon codicon-close"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input id="modalInput" type="text" class="modal-input" />
+          <div id="modalContent" class="modal-content"></div>
+        </div>
+        <div class="modal-footer">
+          <button id="modalCancel" class="secondary-button">Cancel</button>
+          <button id="modalOk" class="primary-button">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script>window.define = undefined;</script>
+    <script src="https://unpkg.com/@xterm/xterm@5.5.0/lib/xterm.js"></script>
+    <script src="https://unpkg.com/@xterm/addon-fit@0.10.0/lib/addon-fit.js"></script>
+              <script src="https://unpkg.com/@xterm/addon-web-links@0.11.0/lib/addon-web-links.js"></script>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.51.0/min/vs/loader.min.js"></script>
+          <script src="safety-dialog.js"></script>
+          <script src="undo-dialog.js"></script>
+          <script src="renderer.js"></script>
+  </body>
+</html>
